@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useReducer, useState } from 'react';
 import { Form } from 'react-final-form';
 import {
   Dialog,
@@ -10,12 +10,16 @@ import {
   Button,
   StepLabel,
   Tooltip,
-  Grid
+  Box,
+  CircularProgress
 } from "@mui/material";
 
 import DoctorSelect from "../DoctorSelect";
+import { getClinics, getOtherData } from "../../api/data.api";
+import { setClinicAC, setDataAC, setLoadingAC } from "../../store/action-creators";
+import { initialState, rootReducer } from "../../store";
 
-import { TFormValues } from "../../store/store.types";
+import { TAction, TAppState, TDoctorItem, TDoctorPayloadItem, TFormValues } from "../../store/store.types";
 import { TStep } from "./index.types";
 import { TDoctorSelect } from "../DoctorSelect/index.types";
 
@@ -23,19 +27,12 @@ const Widget: FC = () => {
 
   const [isOpen, setIsOpen] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
-
-  const changeStep = (step: number): void => {
-    setActiveStep(step);
-  }
+  const [state, dispatch] = useReducer(rootReducer, initialState);
 
   const steps: TStep[] = [
     {id: 1, title: 'Выбор врача', completed: false},
     {id: 2, title: 'Личные данные', completed: false},
   ];
-
-  const handleSubmit = async (values: TFormValues): Promise<void> => {
-    console.log(values);
-  }
 
   const stepsContent: FC<TDoctorSelect>[] = [
     DoctorSelect
@@ -43,6 +40,50 @@ const Widget: FC = () => {
 
   const VisibleComponent = stepsContent[activeStep];
 
+  const handleSubmit = async (values: TFormValues): Promise<void> => {
+    console.log(values);
+  }
+
+  const changeStep = (step: number): void => {
+    setActiveStep(step);
+  }
+
+  const localGetClinic = async () => {
+    dispatch(setLoadingAC(true));
+    const result = await getClinics();
+    dispatch(setClinicAC(result));
+    dispatch(setLoadingAC(false));
+  }
+
+  const localGetOtherData = async (id: string) => {
+    dispatch(setLoadingAC(true));
+    const result = await getOtherData(id);
+    const payload: {doctors: TDoctorItem[], specializations: string[]} = {
+      doctors: [],
+      specializations: [],
+    }
+    result.forEach(item => {
+      const doctorItem: TDoctorItem = {
+        id: item.employee.id,
+        time: item.time,
+        name: item.employee.name,
+        specialization: item.employee.spec
+      }
+      if (item.employee.spec) {
+        payload.doctors.push(doctorItem);
+        if (!payload.specializations.includes(item.employee.spec)) {
+          payload.specializations.push(item.employee.spec);
+        }
+      }
+    })
+    dispatch(setDataAC(payload));
+    dispatch(setLoadingAC(false));
+  }
+
+  useEffect(() => {
+    localGetClinic();
+  }, [])
+  console.log(state)
   return (
     <Dialog maxWidth="xl" open={isOpen}>
       <Form onSubmit={handleSubmit} >
@@ -62,11 +103,9 @@ const Widget: FC = () => {
                     );
                   })}
                 </Stepper>
-                <Grid className={'UMC-widget-content'} container>
-                  <Grid xs={6} item>
-                    <VisibleComponent values={values} />
-                  </Grid>
-                </Grid>
+                <Box className={'UMC-widget-content'}>
+                  <VisibleComponent getData={localGetOtherData} state={state} values={values} />
+                </Box>
               </DialogContent>
               <DialogActions>
                 <Tooltip placement={'top'} title={'Заполните все обязательные поля'}>
@@ -77,6 +116,9 @@ const Widget: FC = () => {
           );
         }}
       </Form>
+      {state.loading && <Box className={'UMC-widget-loading-screen'} sx={{display: 'flex'}}>
+        <CircularProgress/>
+      </Box>}
     </Dialog>
   );
 };
