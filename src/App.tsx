@@ -1,0 +1,17 @@
+import React, { FC } from 'react';
+import { Route, Switch } from "react-router-dom";
+import Widget from "./components/Widget";
+
+const Paths: {[key: string]: string} = {
+  default: '/'
+}
+
+const App: FC = () => {
+  return (
+    <Switch>
+      <Route path={Paths.default}><Widget /></Route>
+    </Switch>
+  );
+}
+
+export default App;

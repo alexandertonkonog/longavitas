@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 16px;
+}
+.UMC-widget-wrapper {
+  width: 800px;
+}
+.UMC-widget-steps__header {
+  width: 50%;
+  padding-bottom: 40px;
+  padding-top: 20px;
+}
+.UMC-widget-content {
+
+}
