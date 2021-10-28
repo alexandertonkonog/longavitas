@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Grid, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 
 import Select from "../fields/Select";
 import { mapStateToSelectList } from "../../utils/index.util";
@@ -7,6 +7,7 @@ import { mapStateToSelectList } from "../../utils/index.util";
 import { ISelect, TSelectItem } from "../fields/input.types";
 import { TDoctorSelect } from "./index.types";
 import { TFormValues } from "../../store/store.types";
+import Calendar from "../fields/Calendar";
 
 const DoctorSelect: FC<TDoctorSelect> = ({values, state, getData}) => {
 
@@ -22,12 +23,14 @@ const DoctorSelect: FC<TDoctorSelect> = ({values, state, getData}) => {
         : list,
       name: 'clinic',
       title: 'Выберите филиал',
+      type: 'select',
       id: 1},
     {list: state.specializations
         ? mapStateToSelectList(state.specializations)
         : list,
       name: 'specialization',
       title: 'Выберите специализацию',
+      type: 'select',
       id: 2,
       deps: ['clinic']},
     {list: state.doctors
@@ -35,8 +38,15 @@ const DoctorSelect: FC<TDoctorSelect> = ({values, state, getData}) => {
         : list,
       name: 'doctor',
       title: 'Выберите врача',
+      type: 'select',
       id: 3,
       deps: ['clinic', 'specialization']},
+    {name: 'date',
+      title: 'Выберите дату приема',
+      type: 'date',
+      id: 4,
+      state: state,
+      deps: ['clinic', 'specialization', 'doctor']},
   ];
 
   const hasntValue = (item: (keyof TFormValues)[], parent: TFormValues): boolean => {
@@ -52,18 +62,20 @@ const DoctorSelect: FC<TDoctorSelect> = ({values, state, getData}) => {
   }, [values.clinic]);
 
   return (
-    <Grid container>
-      <Grid item md={6}>
-        <Stack spacing={2}>
-          {selectList.map(item => {
-            const disabled = item.deps ? hasntValue(item.deps, values) : false;
-            return (
-              <Select key={item.id} disabled={disabled} list={item.list} name={item.name} title={item.title} />
-            );
-          })}
-        </Stack>
-      </Grid>
-    </Grid>
+    <Stack spacing={2}>
+      {selectList.map(item => {
+        const disabled = item.deps ? hasntValue(item.deps, values) : false;
+        if (item.type === 'select') {
+          return (
+            <Select key={item.id} {...item} disabled={disabled} />
+          );
+        } else if (item.type === 'date') {
+          return (
+            <Calendar key={item.id} disabled={disabled} {...item} />
+          );
+        }
+      })}
+    </Stack>
   );
 };
 

@@ -5,10 +5,10 @@ body {
   font-size: 16px;
 }
 .UMC-widget-wrapper {
-  width: 800px;
+  width: 500px;
+  padding-bottom: 10px;
 }
 .UMC-widget-steps__header {
-  width: 50%;
   padding-bottom: 40px;
   padding-top: 20px;
 }
@@ -23,4 +23,54 @@ body {
   justify-content: center;
   height: 100%;
   background-color: #00000050;
+}
+.UMC-widget-btn-area {
+  padding-right: 20px!important;
+}
+.UMC-widget-calendar-wrapper {
+  min-width: 500px;
+  min-height: 400px;
+}
+.UMC-widget-calendar-header {
+  display: flex;
+  align-items: center;
+}
+.UMC-widget-calendar-header__text {
+  margin: 0 20px;
+  font-size: 1.2rem;
+  min-width: 140px;
+  text-align: center;
+}
+
+.UMC-widget-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.UMC-widget-calendar__box {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  user-select: none;
+  font-size: 0.8125rem;
+  border-radius: 4px;
+}
+
+.UMC-widget-calendar__box_outlined {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.UMC-widget-calendar__box_busy {
+  color: rgba(0, 0, 0, 0.46);
+}
+
+.UMC-widget-calendar__box_selected {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.UMC-widget-calendar__box_header {
+  font-size: 1rem;
 }

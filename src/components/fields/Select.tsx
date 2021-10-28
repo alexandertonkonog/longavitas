@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Field } from 'react-final-form';
 import { Select, MenuItem, FormControl, InputLabel, Tooltip } from "@mui/material";
 
@@ -9,7 +9,7 @@ const SelectInput: FC<ISelect> = ({list, name, title, validate, disabled}) => {
   const itemList = list || [];
 
   return (
-    <Field name={name}>
+    <Field name={name} validate={validate}>
       {({input, meta}) => {
         return (
           <Tooltip placement={'right'} title={disabled ? 'Заполните предыдущие поля' : ''}>

@@ -1,4 +1,4 @@
-import { TFormValues } from "../../store/store.types";
+import { TAppState, TFormValues } from "../../store/store.types";
 
 export interface IInput {
   name: string;
@@ -7,6 +7,8 @@ export interface IInput {
   disabled?: boolean;
   deps?: (keyof TFormValues)[];
   id?: string | number;
+  type: 'select' | 'input' | 'date';
+  state?: TAppState;
 }
 
 export type TSelectItem = {

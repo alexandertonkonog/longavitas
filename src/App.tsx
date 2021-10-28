@@ -6,6 +6,8 @@ const Paths: {[key: string]: string} = {
   default: '/'
 }
 
+export const SITE_ADDRESS = React.createContext(window.location.origin);
+
 const App: FC = () => {
   return (
     <Switch>

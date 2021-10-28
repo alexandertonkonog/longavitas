@@ -1,33 +1,42 @@
-import React, { FC, useEffect, useReducer, useState } from 'react';
-import { Form } from 'react-final-form';
+import React, {FC, useContext, useEffect, useReducer, useState} from 'react';
+import {Form} from 'react-final-form';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Stepper,
-  Step,
-  DialogActions,
-  Button,
-  StepLabel,
-  Tooltip,
   Box,
-  CircularProgress
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Step,
+  StepLabel,
+  Stepper,
+  Tooltip
 } from "@mui/material";
 
 import DoctorSelect from "../DoctorSelect";
-import { getClinics, getOtherData } from "../../api/data.api";
-import { setClinicAC, setDataAC, setLoadingAC } from "../../store/action-creators";
-import { initialState, rootReducer } from "../../store";
+import {getClinics, getOtherData} from "../../api/data.api";
+import {setClinicAC, setDataAC, setLoadingAC} from "../../store/action-creators";
+import {initialState, rootReducer} from "../../store";
 
-import { TAction, TAppState, TDoctorItem, TDoctorPayloadItem, TFormValues } from "../../store/store.types";
-import { TStep } from "./index.types";
-import { TDoctorSelect } from "../DoctorSelect/index.types";
+import {TDoctorItem, TFormValues} from "../../store/store.types";
+import {TStep} from "./index.types";
+import {TDoctorSelect} from "../DoctorSelect/index.types";
+import {SITE_ADDRESS} from "../../App";
+import {ClinicIds, SiteAdresses} from "./index.constant";
 
 const Widget: FC = () => {
 
   const [isOpen, setIsOpen] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
   const [state, dispatch] = useReducer(rootReducer, initialState);
+  const siteAddress = useContext(SITE_ADDRESS);
+
+  console.log(state);
+
+  const initialValues = {
+    clinic: siteAddress === SiteAdresses.SITE_DEV ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND,
+  };
 
   const steps: TStep[] = [
     {id: 1, title: 'Выбор врача', completed: false},
@@ -82,11 +91,13 @@ const Widget: FC = () => {
 
   useEffect(() => {
     localGetClinic();
-  }, [])
-  console.log(state)
+  }, []);
+
+  console.log();
+
   return (
     <Dialog maxWidth="xl" open={isOpen}>
-      <Form onSubmit={handleSubmit} >
+      <Form onSubmit={handleSubmit} initialValues={initialValues}>
         {({handleSubmit, values}) => {
           return (
             <form className={'UMC-widget-wrapper'} onSubmit={handleSubmit}>
@@ -107,7 +118,7 @@ const Widget: FC = () => {
                   <VisibleComponent getData={localGetOtherData} state={state} values={values} />
                 </Box>
               </DialogContent>
-              <DialogActions>
+              <DialogActions className={'UMC-widget-btn-area'}>
                 <Tooltip placement={'top'} title={'Заполните все обязательные поля'}>
                   <Button type={'submit'}>Следующий шаг</Button>
                 </Tooltip>
