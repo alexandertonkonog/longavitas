@@ -2,6 +2,11 @@ export type TFormValues = {
   doctor: string;
   specialization: string;
   clinic: string;
+  date: Date;
+  name: string;
+  surname: string;
+  number: string;
+  confirm: boolean;
 }
 
 export type TAction<Payload> = {

@@ -7,7 +7,7 @@ export interface IInput {
   disabled?: boolean;
   deps?: (keyof TFormValues)[];
   id?: string | number;
-  type: 'select' | 'input' | 'date';
+  type: 'select' | 'input' | 'date' | 'checkbox';
   state?: TAppState;
 }
 
@@ -19,4 +19,6 @@ export type TSelectItem = {
 
 export interface ISelect extends IInput {
   list?: TSelectItem[];
+  resetHandle?: (fields: (keyof TFormValues)[] | undefined) => void;
+  resetDeps?: (keyof TFormValues)[];
 }

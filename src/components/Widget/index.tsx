@@ -21,40 +21,42 @@ import {initialState, rootReducer} from "../../store";
 
 import {TDoctorItem, TFormValues} from "../../store/store.types";
 import {TStep} from "./index.types";
-import {TDoctorSelect} from "../DoctorSelect/index.types";
+import {TStepComponent} from "../DoctorSelect/index.types";
 import {SITE_ADDRESS} from "../../App";
 import {ClinicIds, SiteAdresses} from "./index.constant";
+import Personal from "../Personal";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Widget: FC = () => {
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, _] = useState(true);
   const [activeStep, setActiveStep] = useState(0);
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const siteAddress = useContext(SITE_ADDRESS);
 
-  console.log(state);
-
   const initialValues = {
     clinic: siteAddress === SiteAdresses.SITE_DEV ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND,
+    confirm: true
   };
 
   const steps: TStep[] = [
-    {id: 1, title: 'Выбор врача', completed: false},
-    {id: 2, title: 'Личные данные', completed: false},
+    {id: 0, title: 'Выбор врача'},
+    {id: 1, title: 'Личные данные'},
   ];
 
-  const stepsContent: FC<TDoctorSelect>[] = [
-    DoctorSelect
+  const stepsContent: FC<TStepComponent>[] = [
+    DoctorSelect,
+    Personal
   ];
 
   const VisibleComponent = stepsContent[activeStep];
 
   const handleSubmit = async (values: TFormValues): Promise<void> => {
-    console.log(values);
-  }
-
-  const changeStep = (step: number): void => {
-    setActiveStep(step);
+    if (activeStep) {
+      console.log(values);
+    } else {
+      setActiveStep(1);
+    }
   }
 
   const localGetClinic = async () => {
@@ -90,15 +92,22 @@ const Widget: FC = () => {
   }
 
   useEffect(() => {
-    localGetClinic();
+    if (!state.clinics) {
+      localGetClinic();
+    }
   }, []);
-
-  console.log();
 
   return (
     <Dialog maxWidth="xl" open={isOpen}>
       <Form onSubmit={handleSubmit} initialValues={initialValues}>
-        {({handleSubmit, values}) => {
+        {({handleSubmit, form, values, touched, hasValidationErrors}) => {
+          const resetFields = (fields: (keyof TFormValues)[] | undefined) => {
+            if (fields) {
+              form.batch(() => {
+                fields.forEach(item => form.change(item, ''))
+              });
+            }
+          }
           return (
             <form className={'UMC-widget-wrapper'} onSubmit={handleSubmit}>
               <DialogTitle>
@@ -107,20 +116,31 @@ const Widget: FC = () => {
               <DialogContent>
                 <Stepper className={'UMC-widget-steps__header'} activeStep={activeStep}>
                   {steps.map(item => {
+                    const completed = item.id <= activeStep;
                     return (
-                      <Step completed={item.completed} key={item.id}>
+                      <Step completed={completed} key={item.id}>
                         <StepLabel>{item.title}</StepLabel>
                       </Step>
                     );
                   })}
                 </Stepper>
                 <Box className={'UMC-widget-content'}>
-                  <VisibleComponent getData={localGetOtherData} state={state} values={values} />
+                  <VisibleComponent resetHandle={resetFields} getData={localGetOtherData} state={state} />
                 </Box>
               </DialogContent>
               <DialogActions className={'UMC-widget-btn-area'}>
-                <Tooltip placement={'top'} title={'Заполните все обязательные поля'}>
-                  <Button type={'submit'}>Следующий шаг</Button>
+                {activeStep
+                  ? <Button
+                      onClick={() => setActiveStep(0)}
+                      startIcon={<ArrowBackIcon />}
+                      type={'button'}>
+                      Назад
+                  </Button>
+                  : <></>}
+                <Tooltip
+                  placement={'top'}
+                  title={touched && hasValidationErrors ? 'Заполните все обязательные поля' : ''}>
+                  <Button type={'submit'}>{activeStep ? 'Записаться' : 'Следующий шаг'}</Button>
                 </Tooltip>
               </DialogActions>
             </form>

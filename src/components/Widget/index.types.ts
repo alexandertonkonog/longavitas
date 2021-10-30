@@ -1,7 +1,7 @@
 export type TStep = {
   id: number;
   title: string;
-  completed: boolean
+  completed?: boolean
 }
 
 export type TCalendarItem = {

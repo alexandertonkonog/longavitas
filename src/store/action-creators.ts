@@ -1,4 +1,4 @@
-import { TAction, TActionCreator, TAppState, TClinicItem } from "./store.types";
+import { TActionCreator, TAppState, TClinicItem } from "./store.types";
 import { ActionTypes } from "./store.constants";
 
 export const setClinicAC: TActionCreator<TClinicItem[]> = (payload) => {

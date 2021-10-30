@@ -28,31 +28,42 @@ body {
   padding-right: 20px!important;
 }
 .UMC-widget-calendar-wrapper {
-  min-width: 500px;
-  min-height: 400px;
+  width: 500px;
+}
+.UMC-widget-calendar-block {
+  min-height: 260px;
 }
 .UMC-widget-calendar-header {
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
+}
+.UMC-widget-calendar__header {
+  margin-bottom: 20px;
+}
+.UMC-widget-title {
+  font-size: 1.1rem;
 }
 .UMC-widget-calendar-header__text {
-  margin: 0 20px;
-  font-size: 1.2rem;
   min-width: 140px;
   text-align: center;
+  margin: 0 20px;
 }
 
 .UMC-widget-calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-gap: 5px;
 }
 
 .UMC-widget-calendar__box {
   box-sizing: border-box;
   display: flex;
+  justify-self: center;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  width: 40px;
+  height: 30px;
   user-select: none;
   font-size: 0.8125rem;
   border-radius: 4px;
@@ -60,6 +71,17 @@ body {
 
 .UMC-widget-calendar__box_outlined {
   border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.UMC-widget-calendar__box_free {
+  cursor: pointer;
+  transition: all ease 0.1s;
+  color: #1976d2;
+  border: 1px solid rgba(25, 118, 210, 0.3);
+}
+
+.UMC-widget-calendar__box_free:hover {
+  background-color: rgba(25, 118, 210, 0.3);
 }
 
 .UMC-widget-calendar__box_busy {
@@ -73,4 +95,44 @@ body {
 
 .UMC-widget-calendar__box_header {
   font-size: 1rem;
+}
+
+
+.UMC-widget-time {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100px;
+  overflow: auto;
+  align-items: flex-start;
+}
+.UMC-widget-time-block {
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+.UMC-widget-time__title {
+  font-weight: 500;
+  margin-left: 10px;
+  margin-bottom: 20px;
+}
+.UMC-widget-time__box {
+  padding: 7px;
+  margin: 2.5px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all ease 0.1s;
+  color: #1976d2;
+  border: 1px solid rgba(25, 118, 210, 0.3);
+}
+
+.UMC-widget-time__box:hover {
+  background-color: rgba(25, 118, 210, 0.3);
+}
+
+.UMC-widget-time__box_selected {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.UMC-widget-input-error {
+  color: #d32f2f!important;
 }
