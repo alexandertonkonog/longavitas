@@ -1,6 +1,5 @@
 import React, { FC, useState, useMemo } from 'react';
 import { Field, useField } from 'react-final-form';
-import 'moment/locale/ru'
 
 import {
   Dialog,
@@ -12,7 +11,8 @@ import {
   InputLabel,
   OutlinedInput,
   Tooltip,
-  Box, Button
+  Box,
+  Button
 } from "@mui/material";
 import { CalendarToday, ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
 
