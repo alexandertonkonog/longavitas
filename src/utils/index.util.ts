@@ -1,14 +1,22 @@
-import { TSelectItem } from "../components/fields/input.types";
-import { TClinicItem } from "../store/store.types";
-import { TCalendarItem } from "../components/Widget/index.types";
+import { TSelectItem, TCalendarItem, TCalendarTimeItem } from "../components/fields/input.types";
+import { TAppState, TClinicItem, TDoctorItem, TFormValues, TScheduleItem } from "../store/store.types";
+import { DaysOfWeek, Months } from "../components/Widget/index.constant";
 
-export const mapStateToSelectList = <Type extends TClinicItem | string>(list: Type[] | null | undefined): TSelectItem[] | [] => {
+export const mapStateToSelectList = <Type extends TClinicItem | TDoctorItem>(list: Type[] | null | undefined): TSelectItem[] | [] => {
   if (!list) return [];
   return list.map(item => {
-    return typeof item === 'string'
-      ? {id: item, value: item, name: item}
-      : {id: item.id, value: item.id, name: item.name};
+    return {id: item.id, value: item.id, name: item.name};
   });
+};
+
+export const mapSpecializationsToSelectList = (list: TScheduleItem[] | null | undefined): TSelectItem[] | [] => {
+  if (!list) return [];
+  const specializations = Array.from(
+    new Set(list.filter(item => item.specialization).map(item => item.specialization))
+  );
+  return specializations.map(item => (
+    {id: item, value: item, name: item}
+  ));
 };
 
 export const getStartNull = (num: number): string => {
@@ -45,44 +53,66 @@ export const isFreeDate = (time: (string[][] | undefined)[] | undefined) => (dat
   })
 };
 
-const getEmptyDays = (dayOfWeek: number): TCalendarItem[] => {
-  const result = [];
-  if (dayOfWeek !== 1) {
-    const dateItem: TCalendarItem = {
-      name: 0,
-      free: false,
-      empty: true,
-    };
-    if (dayOfWeek === 0) {
-      for(let i = 0; i < 6; i++) {
-        result.push(dateItem);
-      }
-    } else {
-      for(let i = 1; i < dayOfWeek; i++) {
-        result.push(dateItem);
-      }
-    }
+export const getDateList = (
+  date: Date,
+  state: TAppState,
+  { doctor, specialization }: TFormValues
+): TCalendarItem[] | null => {
+  if (!specialization) {
+    return null;
   }
-  return result;
+  const schedule = doctor
+    ? state.schedule?.filter(item => item.doctor === doctor)
+    : state.schedule?.filter(item => item.specialization === specialization);
+
+  let count = 0;
+  const localDate = new Date(date);
+  const result: TCalendarItem[] = [];
+  while(count < 5) {
+    const dateItem: TCalendarItem = {
+      date: new Date(localDate),
+      time: []
+    };
+
+    schedule!.forEach(item => {
+      const doctorItem = state.doctors!.find(doc => doc.id === item.doctor);
+      const duration = doctorItem!.duration;
+      item.time.forEach(time => {
+        const startTime = new Date(time.timeStart);
+        if (isEqualDate(startTime, localDate)) {
+          const endTime = new Date(time.timeEnd);
+          while (startTime < endTime) {
+            const thisDate = new Date(startTime);
+            const thisDateStr = getVisibleTime(thisDate);
+            startTime.setMinutes(startTime.getMinutes() + duration);
+            if (startTime <= endTime) {
+              const indexElem = dateItem.time.findIndex(elem => elem.time === thisDateStr);
+              if (indexElem >= 0) {
+                dateItem.time[indexElem].doctors.push(doctorItem!.id);
+              } else {
+                const timeItem: TCalendarTimeItem = {
+                  date: thisDate,
+                  time: thisDateStr,
+                  doctors: [doctorItem!.id],
+                };
+                dateItem.time.push(timeItem);
+              }
+            }
+          }
+        }
+      })
+    })
+    localDate.setDate(localDate.getDate() + 1);
+    result.push(dateItem);
+    count++;
+  }
+  return result
+    // .filter(item => item.time.length);
 }
 
-export const getDateList = (date: Date, time: (string[][] | undefined)[] | undefined): TCalendarItem[] => {
-  const currentMonth = date.getMonth();
-  const localDate = new Date(date);
-  const isFreeDateHandle = isFreeDate(time);
-  localDate.setDate(1);
-  const dayOfWeek = localDate.getDay();
-  const result = getEmptyDays(dayOfWeek);
-  while(localDate.getMonth() === currentMonth) {
-    const dateItem: TCalendarItem = {
-      name: localDate.getDate(),
-      free: isFreeDateHandle(localDate)
-    };
-    result.push(dateItem);
-    localDate.setDate(localDate.getDate() + 1);
-  }
-  return result;
-}
+// const getTimeItems = (): TCalendarTimeItem => {
+//
+// }
 
 export const isEqualDate = (first: Date | null, second: Date | null = now): boolean => {
   if (!first || !second) return false;
@@ -113,11 +143,34 @@ export const getTimeByDate = (date: Date | null, time: (string[][] | undefined)[
   return Array.from(new Set(result));
 }
 
-export const getVisibleDateTime = (date: Date | null): string => {
+export const getVisibleDate = (date: Date | null): string => {
   if (!date) return '';
   return getStartNull(date.getDate()) + '.'
     + getStartNull(date.getMonth() + 1) + '.'
-    + date.getFullYear() + ' '
-    + getStartNull(date.getHours()) + ':'
+    + date.getFullYear();
+}
+
+export const getVisibleTime = (date: Date | null): string => {
+  if (!date) return '';
+  return getStartNull(date.getHours()) + ':'
     + getStartNull(date.getMinutes());
+}
+
+export const getVisibleDateTime = (date: Date | null): string => {
+  if (!date) return '';
+  return getVisibleDate(date) + ' ' + getVisibleTime(date);
+}
+
+export const getDateForCalendarTitle = (date: Date | null): string => {
+  if (!date) return '';
+  return `${DaysOfWeek[date.getDay()]}, ${date.getDate()} ${getMonthGenitive(date.getMonth())}`;
+}
+
+export const getMonthGenitive = (month: number): string => {
+  const monthName = Months[month];
+  if (month === 2) {
+    return monthName + 'а';
+  }
+  const lastChar = monthName[monthName.length - 1];
+  return monthName.replace(lastChar, 'я');
 }

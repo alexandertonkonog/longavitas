@@ -1,13 +1,9 @@
 import API from './index';
 
-import { TClinicItem, TDoctorPayloadItem } from "../store/store.types";
+import { TApiPayload } from "../store/store.types";
 import { getISODate } from "../utils/index.util";
 
-export const getClinics = async (): Promise<TClinicItem[]> => {
-  return API.get({type: 'clinic'});
-}
-
-export const getOtherData = async (clinicId: string): Promise<TDoctorPayloadItem[]> => {
-  const startDate = getISODate(new Date());
-  return API.get({type: 'time', clinicId, startDate});
+export const getData = async (date: Date | undefined = undefined): Promise<TApiPayload> => {
+  const startDate = getISODate(date ? new Date(date) : new Date());
+  return API.get({startDate});
 }

@@ -1,75 +1,76 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Stack } from "@mui/material";
 
 import Select from "../fields/Select";
-import { mapStateToSelectList } from "../../utils/index.util";
+import { mapSpecializationsToSelectList, mapStateToSelectList } from "../../utils/index.util";
 
-import { ISelect } from "../fields/input.types";
+import { ICalendar, ISelect } from "../fields/input.types";
 import { TStepComponent } from "./index.types";
 import { TFormValues } from "../../store/store.types";
 import Calendar from "../fields/Calendar";
 import { isRequired } from "../../utils/validate.util";
 import { useForm } from "react-final-form";
+import { ClinicIds } from "../Widget/index.constant";
 
-const DoctorSelect: FC<TStepComponent> = ({resetHandle, state, getData}) => {
+const DoctorSelect: FC<TStepComponent> = ({resetHandle, state}) => {
 
-  // const list: TSelectItem[] = [
-  //   {id: 2, name: 'Вариант 1', value: 1},
-  //   {id: 3, name: 'Вариант 2', value: 2},
-  //   {id: 4, name: 'Вариант 3', value: 3},
-  // ];
   const form = useForm<TFormValues>();
   const formValues = form.getState().values;
-  const clinic = formValues.clinic;
 
-  const selectList: ISelect[] = [
+  const isKT = formValues.clinic === ClinicIds.SITE_SECOND;
+
+  const selectList: (ISelect | ICalendar)[] = [
     {list: mapStateToSelectList(state.clinics),
       name: 'clinic',
       validate: isRequired,
       title: 'Выберите филиал',
       type: 'select',
       resetDeps: ['specialization', 'doctor', 'date'],
+      order: 1,
       id: 1},
-    {list: mapStateToSelectList(state.specializations),
+    {list: mapSpecializationsToSelectList(state.schedule
+        ?.filter(item => item.clinic === formValues.clinic)),
       name: 'specialization',
       title: 'Выберите специализацию',
       validate: isRequired,
       type: 'select',
       id: 2,
       resetDeps: ['doctor', 'date'],
+      order: 2,
       deps: ['clinic']},
-    {list: mapStateToSelectList(state.doctors?.filter(item => item.specialization === formValues.specialization)),
+    {list: isKT
+        ? mapStateToSelectList(state.doctors?.filter(item => formValues.date?.doctors?.includes(item.id)))
+        : mapStateToSelectList(state.doctors?.filter(item => item.specialization === formValues.specialization)),
       name: 'doctor',
       title: 'Выберите врача',
       validate: isRequired,
       type: 'select',
       id: 3,
-      resetDeps: ['date'],
-      deps: ['clinic', 'specialization']},
+      resetDeps: isKT ? [] : ['date'],
+      order: isKT ? 4 : 3,
+      deps: isKT ? ['clinic', 'specialization', 'date'] : ['clinic', 'specialization']},
     {name: 'date',
       title: 'Выберите дату приема',
       validate: isRequired,
       type: 'date',
       id: 4,
+      values: formValues,
+      order: isKT ? 3 : 4,
       state: state,
-      deps: ['clinic', 'specialization', 'doctor']},
+      deps: isKT ? ['clinic', 'specialization'] : ['clinic', 'specialization', 'doctor']},
   ];
 
   const hasntValue = (item: (keyof TFormValues)[], parent: TFormValues): boolean => {
     return item.some(elem => {
       return !(elem in parent && parent[elem]);
     })
-  }
+  };
 
-  useEffect(() => {
-    if (clinic) {
-      getData(clinic);
-    }
-  }, [clinic]);
+  const sortedSelectList = selectList.sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return (
     <Stack spacing={2}>
-      {selectList.map(item => {
+      {sortedSelectList.map(item => {
         const disabled = item.deps ? hasntValue(item.deps, formValues) : false;
         if (item.type === 'select') {
           return (
@@ -77,7 +78,7 @@ const DoctorSelect: FC<TStepComponent> = ({resetHandle, state, getData}) => {
           );
         } else if (item.type === 'date') {
           return (
-            <Calendar key={item.id} disabled={disabled} {...item} />
+            <Calendar key={item.id} disabled={disabled} {...item as ICalendar} />
           );
         }
       })}

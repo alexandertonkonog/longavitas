@@ -25,11 +25,11 @@ export const Months = [
 ];
 
 export const DaysOfWeek = [
+  'Вс',
   'Пн',
   'Вт',
   'Ср',
   'Чт',
   'Пт',
   'Сб',
-  'Вс',
 ];

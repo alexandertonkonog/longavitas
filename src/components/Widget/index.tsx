@@ -7,7 +7,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
+  DialogTitle, IconButton,
   Step,
   StepLabel,
   Stepper,
@@ -15,28 +15,29 @@ import {
 } from "@mui/material";
 
 import DoctorSelect from "../DoctorSelect";
-import {getClinics, getOtherData} from "../../api/data.api";
-import {setClinicAC, setDataAC, setLoadingAC} from "../../store/action-creators";
+import {getData} from "../../api/data.api";
+import {setDataAC, setLoadingAC} from "../../store/action-creators";
 import {initialState, rootReducer} from "../../store";
 
-import {TDoctorItem, TFormValues} from "../../store/store.types";
+import {TFormValues} from "../../store/store.types";
 import {TStep} from "./index.types";
 import {TStepComponent} from "../DoctorSelect/index.types";
 import {SITE_ADDRESS} from "../../App";
 import {ClinicIds, SiteAdresses} from "./index.constant";
 import Personal from "../Personal";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Close } from "@mui/icons-material";
 
 const Widget: FC = () => {
 
-  const [isOpen, _] = useState(true);
-  const [activeStep, setActiveStep] = useState(0);
+  const [isOpen, setIsOpen] = useState(true);
+  const [activeStep, setActiveStep] = useState(1);
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const siteAddress = useContext(SITE_ADDRESS);
 
   const initialValues = {
     clinic: siteAddress === SiteAdresses.SITE_DEV ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND,
-    confirm: true
+    confirm: true,
   };
 
   const steps: TStep[] = [
@@ -59,42 +60,15 @@ const Widget: FC = () => {
     }
   }
 
-  const localGetClinic = async () => {
+  const localGetData = async () => {
     dispatch(setLoadingAC(true));
-    const result = await getClinics();
-    dispatch(setClinicAC(result));
-    dispatch(setLoadingAC(false));
-  }
-
-  const localGetOtherData = async (id: string) => {
-    dispatch(setLoadingAC(true));
-    const result = await getOtherData(id);
-    const payload: {doctors: TDoctorItem[], specializations: string[]} = {
-      doctors: [],
-      specializations: [],
-    }
-    result.forEach(item => {
-      const doctorItem: TDoctorItem = {
-        id: item.employee.id,
-        time: item.time,
-        name: item.employee.name,
-        specialization: item.employee.spec
-      }
-      if (item.employee.spec) {
-        payload.doctors.push(doctorItem);
-        if (!payload.specializations.includes(item.employee.spec)) {
-          payload.specializations.push(item.employee.spec);
-        }
-      }
-    })
-    dispatch(setDataAC(payload));
+    const result = await getData();
+    dispatch(setDataAC(result));
     dispatch(setLoadingAC(false));
   }
 
   useEffect(() => {
-    if (!state.clinics) {
-      localGetClinic();
-    }
+    localGetData();
   }, []);
 
   return (
@@ -112,6 +86,12 @@ const Widget: FC = () => {
             <form className={'UMC-widget-wrapper'} onSubmit={handleSubmit}>
               <DialogTitle>
                 Запись на прием
+                <IconButton
+                  className={'UMC-widget__btn-exit'}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Close />
+                </IconButton>
               </DialogTitle>
               <DialogContent>
                 <Stepper className={'UMC-widget-steps__header'} activeStep={activeStep}>
@@ -125,7 +105,7 @@ const Widget: FC = () => {
                   })}
                 </Stepper>
                 <Box className={'UMC-widget-content'}>
-                  <VisibleComponent resetHandle={resetFields} getData={localGetOtherData} state={state} />
+                  <VisibleComponent resetHandle={resetFields} state={state} />
                 </Box>
               </DialogContent>
               <DialogActions className={'UMC-widget-btn-area'}>

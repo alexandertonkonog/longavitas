@@ -4,10 +4,7 @@ export type TStep = {
   completed?: boolean
 }
 
-export type TCalendarItem = {
-  name: number;
-  free: boolean;
-  empty?: boolean;
+export type TTimeDoctorItem = {
+  id: string;
+  name: string;
 }
-
-export type TButtonVariant = 'outlined' | 'contained' | 'text';

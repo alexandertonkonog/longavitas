@@ -1,8 +1,10 @@
+import { TCalendarTimeItem } from "../components/fields/input.types";
+
 export type TFormValues = {
   doctor: string;
   specialization: string;
   clinic: string;
-  date: Date;
+  date: TCalendarTimeItem;
   name: string;
   surname: string;
   number: string;
@@ -22,9 +24,21 @@ export type TClinicItem = {
 export type TDoctorItem = {
   id: string;
   name: string;
-  spec?: string;
-  specialization?: string;
-  time?: string[][];
+  clinic: string;
+  duration: number;
+  specialization: string;
+}
+
+export type TTimeItem = {
+  timeStart: string;
+  timeEnd: string;
+}
+
+export type TScheduleItem = {
+  doctor: string;
+  specialization: string;
+  clinic: string;
+  time: TTimeItem[];
 }
 
 export type TDoctorPayloadItem = {
@@ -33,8 +47,15 @@ export type TDoctorPayloadItem = {
   employee: TDoctorItem;
 }
 
+export type TApiPayload = {
+  clinics: TClinicItem[] | null;
+  schedule: TScheduleItem[] | null;
+  doctors: TDoctorItem[] | null;
+}
+
 export type TAppState = {
   clinics: TClinicItem[] | null;
+  schedule: TScheduleItem[] | null;
   loading: boolean;
   specializations: string[] | null;
   doctors: TDoctorItem[] | null;

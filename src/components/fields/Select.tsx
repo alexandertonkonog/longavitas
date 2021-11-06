@@ -22,7 +22,6 @@ const SelectInput: FC<ISelect> = ({
   disabled
 }) => {
   const itemList = list || [];
-
   return (
     <Field name={name} validate={validate}>
       {({input, meta}) => {
