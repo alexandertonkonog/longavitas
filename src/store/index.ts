@@ -8,7 +8,9 @@ export const initialState: TAppState = {
   schedule: null,
   loading: false,
   doctors: null,
-  specializations: null
+  specializations: null,
+  screenWidth: document.documentElement.clientWidth,
+  appointment: null,
 }
 
 export const rootReducer: Reducer<TAppState, TAction<any>> = (state, action) => {
@@ -23,6 +25,18 @@ export const rootReducer: Reducer<TAppState, TAction<any>> = (state, action) => 
         schedule: action.payload.schedule,
         doctors: action.payload.doctors,
         specializations: action.payload.specializations
+      };
+    }
+    case ActionTypes.SET_WIDTH: {
+      return {
+        ...state,
+        screenWidth: action.payload
+      };
+    }
+    case ActionTypes.SET_APPOINTMENT_DATA: {
+      return {
+        ...state,
+        appointment: action.payload
       };
     }
     default: {

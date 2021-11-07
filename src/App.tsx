@@ -3,7 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import Widget from "./components/Widget";
 
 const Paths: {[key: string]: string} = {
-  default: '/'
+  default: '/appointment'
 }
 
 export const SITE_ADDRESS = React.createContext(window.location.origin);

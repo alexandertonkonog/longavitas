@@ -39,8 +39,14 @@ const DoctorSelect: FC<TStepComponent> = ({resetHandle, state}) => {
       order: 2,
       deps: ['clinic']},
     {list: isKT
-        ? mapStateToSelectList(state.doctors?.filter(item => formValues.date?.doctors?.includes(item.id)))
-        : mapStateToSelectList(state.doctors?.filter(item => item.specialization === formValues.specialization)),
+        ? mapStateToSelectList(state.doctors?.filter(item => {
+          const doctor = state.schedule?.find(elem => elem.doctor === item.id);
+          return formValues.date?.doctors?.includes(item.id) && doctor;
+        }))
+        : mapStateToSelectList(state.doctors?.filter(item => {
+          const doctor = state.schedule?.find(elem => elem.doctor === item.id);
+          return item.specialization === formValues.specialization && doctor;
+        })),
       name: 'doctor',
       title: 'Выберите врача',
       validate: isRequired,

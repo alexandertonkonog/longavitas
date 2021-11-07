@@ -9,6 +9,8 @@ export type TFormValues = {
   surname: string;
   number: string;
   confirm: boolean;
+  address?: string;
+  comment?: string;
 }
 
 export type TAction<Payload> = {
@@ -59,6 +61,8 @@ export type TAppState = {
   loading: boolean;
   specializations: string[] | null;
   doctors: TDoctorItem[] | null;
+  screenWidth: number;
+  appointment: TFormValues | null;
 }
 
 export type TActionCreator<Type> = (payload: Type) => TAction<Type>;

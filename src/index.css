@@ -7,14 +7,13 @@ body {
 .UMC-widget-wrapper {
   width: 500px;
   padding-bottom: 10px;
+  position: relative;
 }
 .UMC-widget-steps__header {
   padding-bottom: 40px;
   padding-top: 20px;
 }
-.UMC-widget-content {
 
-}
 .UMC-widget-loading-screen {
   position: absolute;
   width: 100%;
@@ -158,4 +157,34 @@ body {
 .UMC-widget__personal-btn {
   margin-top: 5px!important;
   justify-content: flex-start!important;
+}
+
+@media screen and (max-width: 1024px) {
+  .UMC-widget-calendar__column-content {
+    max-height: 500px;
+    overflow: auto;
+  }
+}
+@media screen and (max-width: 768px) {
+  .UMC-widget-calendar__column-content {
+    max-height: 300px;
+  }
+  .UMC-widget-calendar__column {
+    width: 100%;
+  }
+  .UMC-widget-calendar__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media screen and (max-width: 450px) {
+  .UMC-widget-wrapper {
+    width: 100%;
+  }
+  .UMC-widget-calendar__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .UMC-widget-calendar-header__text {
+    min-width: 120px;
+    font-size: 1rem;
+  }
 }

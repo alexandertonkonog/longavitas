@@ -1,6 +1,6 @@
 import { TSelectItem, TCalendarItem, TCalendarTimeItem } from "../components/fields/input.types";
 import { TAppState, TClinicItem, TDoctorItem, TFormValues, TScheduleItem } from "../store/store.types";
-import { DaysOfWeek, Months } from "../components/Widget/index.constant";
+import { DaysOfWeek, Months, SiteAdresses } from "../components/Widget/index.constant";
 
 export const mapStateToSelectList = <Type extends TClinicItem | TDoctorItem>(list: Type[] | null | undefined): TSelectItem[] | [] => {
   if (!list) return [];
@@ -173,4 +173,23 @@ export const getMonthGenitive = (month: number): string => {
   }
   const lastChar = monthName[monthName.length - 1];
   return monthName.replace(lastChar, 'я');
+}
+
+type TAppointmentValues = {[key: string]: string | number | boolean};
+
+export const formatFormValues = (values: TFormValues, address: string): TAppointmentValues => {
+  const result: TAppointmentValues = {
+    sourceCode: address === SiteAdresses.SITE_MAIN ? 38 : 141,
+  };
+  const entries = Object.entries(values);
+  entries.forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      result[key] = value.trim();
+    } else if (typeof value === 'object') {
+      result[key] = getISODate(values.date.date)
+    } else {
+      result[key] = value;
+    }
+  })
+  return result;
 }

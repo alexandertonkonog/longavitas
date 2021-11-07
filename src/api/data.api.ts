@@ -7,3 +7,8 @@ export const getData = async (date: Date | undefined = undefined): Promise<TApiP
   const startDate = getISODate(date ? new Date(date) : new Date());
   return API.get({startDate});
 }
+
+export const setAppointment = async (values: {[key: string]: string | number | boolean}): Promise<any> => {
+  // return API.post(values);
+  return true;
+}

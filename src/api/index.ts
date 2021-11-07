@@ -10,7 +10,7 @@ class API {
     return this.request(params);
   }
 
-  public async post(data: any, urlParams: TUrlParams): Promise<any> {
+  public async post(data: any, urlParams?: TUrlParams): Promise<any> {
     const params: TApiParams = {
       method: 'POST',
       params: urlParams
@@ -23,7 +23,7 @@ class API {
       const url = APIConstants.API_URL + (params.params ? this.getParamsFromObject(params.params) : '');
       const response = await fetch(url, {
         method: params.method,
-        body: data,
+        body: JSON.stringify(data),
         headers: {
           Authorization: "Basic " + btoa(APIConstants.API_LOGIN + ':' + APIConstants.API_PASSWORD),
         }

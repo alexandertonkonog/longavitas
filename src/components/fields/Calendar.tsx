@@ -117,9 +117,10 @@ const Calendar: FC<ICalendar> = (
               </FormControl>
             </Tooltip>
             <Dialog
+              fullScreen={state.screenWidth <= 768}
               PaperProps={{
                 style: {
-                  maxWidth: '95vw',
+                  maxWidth: state.screenWidth <= 768 ? '100vw' : '95vw',
                 }
               }}
               onClose={() => changeCalendarVisibility(false)}
@@ -129,13 +130,21 @@ const Calendar: FC<ICalendar> = (
               <div className={'UMC-widget-calendar-wrapper'}>
                 <DialogTitle>
                   <div className={'UMC-widget-calendar-header'}>
-                    <IconButton disabled={now >= date} onClick={() => changeCalendarMonth(false)}>
+                    <IconButton
+                      disabled={now >= date}
+                      onClick={() => changeCalendarMonth(false)}
+                      size={state.screenWidth < 450 ? 'small' : 'medium'}
+                    >
                       <ArrowBackIosNew />
                     </IconButton>
                     <div className={'UMC-widget-calendar-header__text UMC-widget-title'}>
                       {getDateForCalendarTitle(date)}
                     </div>
-                    <IconButton disabled={date >= nowPlusMonth} onClick={() => changeCalendarMonth(true)}>
+                    <IconButton
+                      disabled={date >= nowPlusMonth}
+                      onClick={() => changeCalendarMonth(true)}
+                      size={state.screenWidth < 450 ? 'small' : 'medium'}
+                    >
                       <ArrowForwardIos />
                     </IconButton>
                   </div>
@@ -150,22 +159,25 @@ const Calendar: FC<ICalendar> = (
                   <div className="UMC-widget-calendar-block">
                     <div className={'UMC-widget-calendar__grid'}>
                       {dateList?.map(item => (
-                        <div className={'UMC-widget-calendar__column'}>
+                        <div key={item.date.getTime()} className={'UMC-widget-calendar__column'}>
                           <h3 className={item.time.length
                             ? 'UMC-widget-calendar__column-title'
                             : 'UMC-widget-calendar__column-text_grey UMC-widget-calendar__column-title'}>
                             {getDateForCalendarTitle(item.date)}
                           </h3>
-                          {item.time.length
-                            ? item.time.map(time => (
-                              <p
-                                onClick={() => onChange(time)}
-                                className={'UMC-widget-calendar__box UMC-widget-calendar__box_free'}>{time.time}</p>
-                            ))
-                            : <p className={'UMC-widget-calendar__column-text UMC-widget-calendar__column-text_grey'}>
+                          <div className="UMC-widget-calendar__column-content">
+                            {item.time.length
+                              ? item.time.map((time, timeIndex) => (
+                                <p
+                                  key={item.date.getTime() + timeIndex}
+                                  onClick={() => onChange(time)}
+                                  className={'UMC-widget-calendar__box UMC-widget-calendar__box_free'}>{time.time}</p>
+                              ))
+                              : <p className={'UMC-widget-calendar__column-text UMC-widget-calendar__column-text_grey'}>
                                 Нет времени для записи
-                            </p>
-                          }
+                              </p>
+                            }
+                          </div>
                         </div>
                       ))}
                     </div>
