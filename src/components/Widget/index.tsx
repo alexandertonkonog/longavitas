@@ -81,7 +81,11 @@ const Widget: FC = () => {
   const localGetData = async () => {
     dispatch(setLoadingAC(true));
     const result = await getData();
-    dispatch(setDataAC(result));
+    if (result) {
+      dispatch(setDataAC(result));
+    } else {
+      history.push('/appointment/error');
+    }
     dispatch(setLoadingAC(false));
   }
 
