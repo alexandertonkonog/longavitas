@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import { Stack } from "@mui/material";
 
 import Select from "../fields/Select";
-import { mapSpecializationsToSelectList, mapStateToSelectList } from "../../utils/index.util";
+import { getDataFromInitialNode, mapSpecializationsToSelectList, mapStateToSelectList } from "../../utils/index.util";
 
 import { ICalendar, ISelect } from "../fields/input.types";
 import { TStepComponent } from "./index.types";
@@ -10,10 +10,12 @@ import { TFormValues } from "../../store/store.types";
 import Calendar from "../fields/Calendar";
 import { isRequired } from "../../utils/validate.util";
 import { useForm } from "react-final-form";
-import { ClinicIds } from "../Widget/index.constant";
+import { ClinicIds, SiteAdresses } from "../Widget/index.constant";
+import { SITE_ADDRESS } from "../../App";
 
 const DoctorSelect: FC<TStepComponent> = ({resetHandle, state}) => {
 
+  const siteAddress = useContext(SITE_ADDRESS);
   const form = useForm<TFormValues>();
   const formValues = form.getState().values;
 
@@ -72,7 +74,45 @@ const DoctorSelect: FC<TStepComponent> = ({resetHandle, state}) => {
     })
   };
 
+  const setInitialValues = () => {
+    const initialData = getDataFromInitialNode();
+    form.batch(() => {
+      const clinic = siteAddress === SiteAdresses.SITE_DEV ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND;
+      form.change('clinic', clinic);
+      const changeClinic = (spec: string) => {
+        const schedule = state.schedule?.find(item =>
+          item.specialization === spec && item.clinic === clinic);
+        if (!schedule) {
+          const thisClinic = state.clinics?.find(item => item.id !== clinic);
+          if (thisClinic) {
+            form.change('clinic', thisClinic.id);
+          }
+        }
+      }
+      if (initialData) {
+        if (initialData.specialization) {
+          form.change('specialization', initialData.specialization);
+          changeClinic(initialData.specialization);
+        }
+        if (initialData.doctor) {
+          const doctor = state.doctors?.find(item => item.id === initialData.doctor);
+          if (doctor) {
+            form.change('specialization', doctor.specialization);
+            form.change('doctor', initialData.doctor);
+            changeClinic(doctor.specialization);
+          }
+        }
+      }
+    })
+  }
+
   const sortedSelectList = selectList.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  useEffect(() => {
+    if (!state.loading) {
+      setInitialValues();
+    }
+  }, [state.loading])
 
   return (
     <Stack spacing={2}>

@@ -1,5 +1,4 @@
 import { TAppState, TFormValues } from "../../store/store.types";
-import { TTimeDoctorItem } from "../Widget/index.types";
 
 export interface IInput {
   name: string;
@@ -8,7 +7,7 @@ export interface IInput {
   disabled?: boolean;
   visibility?: boolean;
   visibleName?: string;
-  mask?: string;
+  mask?: any;
   deps?: (keyof TFormValues)[];
   id?: string | number;
   order?: number;

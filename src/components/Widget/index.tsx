@@ -23,7 +23,6 @@ import {TFormValues} from "../../store/store.types";
 import {TStep} from "./index.types";
 import {TStepComponent} from "../DoctorSelect/index.types";
 import {SITE_ADDRESS} from "../../App";
-import {ClinicIds, SiteAdresses} from "./index.constant";
 import Personal from "../Personal";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Close } from "@mui/icons-material";
@@ -35,13 +34,13 @@ import Result from "../Result";
 const Widget: FC = () => {
 
   const [isOpen, _] = useState(true);
+  const [count, setCount] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
   const [state, dispatch] = useReducer(rootReducer, initialState);
-  const history = useHistory();
   const siteAddress = useContext(SITE_ADDRESS);
+  const history = useHistory();
 
-  const initialValues = {
-    clinic: siteAddress === SiteAdresses.SITE_DEV ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND,
+  const initialValues: any = {
     confirm: true,
   };
 
@@ -58,7 +57,6 @@ const Widget: FC = () => {
   const VisibleComponent = stepsContent[activeStep];
 
   const makeAppointment = async (values: TFormValues): Promise<any> => {
-    // console.log(values);
     const sendValues = formatFormValues(values, siteAddress);
     return setAppointment(sendValues);
   }
@@ -89,13 +87,17 @@ const Widget: FC = () => {
     dispatch(setLoadingAC(false));
   }
 
+  const btnCallback = (): void => {
+    setCount(prev => ++prev);
+  }
+
   const changeWindowWidth = () => {
     dispatch(setWidthAC(document.documentElement.clientWidth));
   }
 
   useEffect(() => {
     localGetData();
-  }, []);
+  }, [count]);
 
   useEffect(() => {
     window.addEventListener('resize', changeWindowWidth);
@@ -117,7 +119,7 @@ const Widget: FC = () => {
           </IconButton>
         </DialogTitle>
         <Route path={'/appointment/:status'}>
-          <Result state={state} />
+          <Result state={state} btnCallback={btnCallback} />
         </Route>
         <Route path={'/appointment'} exact>
         <Form onSubmit={handleSubmit} initialValues={initialValues}>

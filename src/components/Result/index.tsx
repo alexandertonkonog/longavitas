@@ -8,6 +8,7 @@ import { getVisibleDateTime } from "../../utils/index.util";
 
 type TResult = {
   state: TAppState;
+  btnCallback: () => void;
 }
 
 type TResultParam = {
@@ -46,10 +47,15 @@ const Result: FC<TResult> = (props) => {
       </DialogContent>
       <DialogActions>
         {isError
-          ? <Button onClick={() => history.push('/appointment')}>
+          ? <Button onClick={() => {
+            props.btnCallback();
+            history.push('/appointment')
+          }}>
             Попробовать еще раз
           </Button>
-          : <Button onClick={() => history.push('/')}>
+          : <Button onClick={() => {
+              history.push('/')
+          }}>
             Хорошо
           </Button>
         }

@@ -183,7 +183,13 @@ export const formatFormValues = (values: TFormValues, address: string): TAppoint
   };
   const entries = Object.entries(values);
   entries.forEach(([key, value]) => {
-    if (typeof value === 'string') {
+    if (key === 'birthday') {
+      const localValue = value as string;
+      const day = +localValue.slice(0, 2);
+      const month = +localValue.slice(2, 4);
+      const year = +localValue.slice(4);
+      result[key] = getISODate(new Date(year, month + 1, day));
+    } else if (typeof value === 'string') {
       result[key] = value.trim();
     } else if (typeof value === 'object') {
       result[key] = getISODate(values.date.date)
@@ -192,4 +198,16 @@ export const formatFormValues = (values: TFormValues, address: string): TAppoint
     }
   })
   return result;
+}
+
+type TNodeData = {
+  specialization?: string;
+  doctor?: string;
+}
+
+export const getDataFromInitialNode = (): TNodeData | null => {
+  const initialNode = document.getElementById('UMC-widget-data');
+  if (!initialNode || !initialNode.textContent) return null;
+  const data = JSON.parse(initialNode.textContent) as TNodeData;
+  return data || null;
 }

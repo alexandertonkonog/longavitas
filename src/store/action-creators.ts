@@ -1,4 +1,4 @@
-import { TActionCreator, TApiPayload, TFormValues } from "./store.types";
+import { TActionCreator, TApiPayload } from "./store.types";
 import { ActionTypes } from "./store.constants";
 
 export const setLoadingAC: TActionCreator<boolean> = (payload) => {

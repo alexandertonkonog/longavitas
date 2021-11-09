@@ -9,6 +9,7 @@ const TextMaskCustom = React.forwardRef<HTMLElement, any>(
   function TextMaskCustom(props, ref) {
     const mask = props.mask || '+7 (000) 00-00-000';
     const { value, onChange, ...other } = props;
+
     return (
       <IMaskInput
         {...other}
@@ -16,7 +17,6 @@ const TextMaskCustom = React.forwardRef<HTMLElement, any>(
         onFocus={props.onFocus}
         onAccept={(value: string) => {
           const val = value.replace(/\D+/g,'');
-          console.log(val);
           props.onChange(val);
         }}
         id={props.id}
@@ -29,7 +29,6 @@ const TextMaskCustom = React.forwardRef<HTMLElement, any>(
 );
 
 const MaskedInput: FC<IInput> = (props) => {
-
   return (
     <Field name={props.name} validate={props.validate}>
       {({ input, meta }) => (
@@ -40,12 +39,15 @@ const MaskedInput: FC<IInput> = (props) => {
             {props.title}
           </InputLabel>
           <OutlinedInput
-            {...props}
             {...input}
             label={props.title}
             id={'number'}
             error={!!(meta.touched && meta.error)}
             inputComponent={TextMaskCustom as any}
+            inputProps={{
+              mask: props.mask,
+              name: props.name,
+            }}
           />
           {meta.touched && meta.error
             && <FormHelperText

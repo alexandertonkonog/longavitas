@@ -8,55 +8,64 @@ import { isLength, isRequired } from "../../utils/validate.util";
 import MaskedInput from "../fields/MaskedInput";
 
 const Personal: FC<TStepComponent> = () => {
-  const [inputVisibility, setInputVisibility] = useState([
-    {name: 'address', visible: false}, {name: 'comment', visible: false}
-  ]);
-
-  const inputList: IInput[] = [
+  const inputListArr: IInput[] = [
     {name: 'name',
       validate: isLength(2, 20),
       title: 'Введите имя',
       type: 'input',
+      visibility: true,
       id: 1},
     {name: 'surname',
       validate: isLength(2, 20),
       title: 'Введите фамилию',
       type: 'input',
+      visibility: true,
       id: 2},
     {name: 'number',
       validate: isLength(11, 11),
       title: 'Введите телефон',
       mask: '+7 (000) 00-00-000',
+      visibility: true,
       type: 'input',
       id: 3},
+    {name: 'birthday',
+      validate: isLength(8, 8),
+      title: 'Введите дату рождения',
+      type: 'input',
+      mask: Date,
+      visibleName: 'Дата рождения',
+      visibility: false,
+      id: 5},
     {name: 'address',
       title: 'Введите адрес',
       type: 'input',
       visibleName: 'Адрес',
-      visibility: inputVisibility[0].visible,
-      id: 5},
+      visibility: false,
+      id: 6},
     {name: 'comment',
       title: 'Введите комментарий',
       visibleName: 'Комментарий',
-      visibility: inputVisibility[1].visible,
+      visibility: false,
       type: 'input',
-      id: 6},
+      id: 7},
     {name: 'confirm',
       validate: isRequired,
+      visibility: true,
       title: 'Я согласен с Политикой конфиденциальности',
       type: 'checkbox',
       id: 4},
   ];
 
+  const [inputList, setInputList] = useState(inputListArr);
+
   const changeInputVisibility = (name: string): void => {
-    setInputVisibility(prev => {
-      const stateCopy = [ ...prev ];
-      const elemIndex = prev.findIndex(item => item.name === name);
-      if (elemIndex >= 0) {
-        stateCopy[elemIndex] = {name, visible: true};
-        return stateCopy;
-      }
-      return prev;
+    setInputList(prev => {
+      return prev.map(item => {
+        if (item.name === name) {
+          return {...item, visibility: true};
+        }
+        return item;
+      })
     })
   }
 
