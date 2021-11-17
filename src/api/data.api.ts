@@ -9,6 +9,5 @@ export const getData = async (date: Date | undefined = undefined): Promise<TApiP
 }
 
 export const setAppointment = async (values: {[key: string]: string | number | boolean}): Promise<any> => {
-  // return API.post(values);
-  return true;
+  return API.post(values);
 }

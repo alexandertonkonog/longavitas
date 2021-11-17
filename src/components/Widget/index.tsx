@@ -63,7 +63,9 @@ const Widget: FC = () => {
 
   const handleSubmit = async (values: TFormValues, form: FormApi<TFormValues>): Promise<void> => {
     if (activeStep) {
+      dispatch(setLoadingAC(true));
       const result = await makeAppointment(values);
+      dispatch(setLoadingAC(false));
       if (result) {
         dispatch(setAppointmentDataAC(values));
         form.reset();
@@ -123,7 +125,7 @@ const Widget: FC = () => {
         </Route>
         <Route path={'/appointment'} exact>
         <Form onSubmit={handleSubmit} initialValues={initialValues}>
-          {({handleSubmit, form, values, touched, hasValidationErrors}) => {
+          {({handleSubmit, form, submitting, pristine, touched, hasValidationErrors}) => {
             const resetFields = (fields: (keyof TFormValues)[] | undefined) => {
               if (fields) {
                 form.batch(() => {
@@ -160,7 +162,7 @@ const Widget: FC = () => {
                   <Tooltip
                     placement={'top'}
                     title={touched && hasValidationErrors ? 'Заполните все обязательные поля' : ''}>
-                    <Button type={'submit'}>{activeStep ? 'Записаться' : 'Следующий шаг'}</Button>
+                    <Button disabled={submitting || pristine} type={'submit'}>{activeStep ? 'Записаться' : 'Следующий шаг'}</Button>
                   </Tooltip>
                 </DialogActions>
               </form>

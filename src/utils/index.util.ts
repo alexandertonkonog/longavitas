@@ -188,7 +188,7 @@ export const formatFormValues = (values: TFormValues, address: string): TAppoint
       const day = +localValue.slice(0, 2);
       const month = +localValue.slice(2, 4);
       const year = +localValue.slice(4);
-      result[key] = getISODate(new Date(year, month + 1, day));
+      result[key] = getISODate(new Date(year, month - 1, day));
     } else if (typeof value === 'string') {
       result[key] = value.trim();
     } else if (typeof value === 'object') {
@@ -203,6 +203,7 @@ export const formatFormValues = (values: TFormValues, address: string): TAppoint
 type TNodeData = {
   specialization?: string;
   doctor?: string;
+  sourceCode?: string;
 }
 
 export const getDataFromInitialNode = (): TNodeData | null => {

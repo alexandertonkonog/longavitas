@@ -102,6 +102,9 @@ const DoctorSelect: FC<TStepComponent> = ({resetHandle, state}) => {
             changeClinic(doctor.specialization);
           }
         }
+        if (initialData.sourceCode) {
+          form.change('sourceCode', initialData.sourceCode);
+        }
       }
     })
   }

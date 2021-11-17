@@ -24,9 +24,9 @@ class API {
       const response = await fetch(url, {
         method: params.method,
         body: JSON.stringify(data),
-        headers: {
-          Authorization: "Basic " + btoa(APIConstants.API_LOGIN + ':' + APIConstants.API_PASSWORD),
-        }
+        // headers: {
+        //   Authorization: "Basic " + btoa(APIConstants.API_LOGIN + ':' + APIConstants.API_PASSWORD),
+        // }
       })
       return await response.json();
     } catch (e) {

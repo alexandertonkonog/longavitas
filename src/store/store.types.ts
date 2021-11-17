@@ -11,6 +11,7 @@ export type TFormValues = {
   confirm: boolean;
   address?: string;
   comment?: string;
+  sourceCode?: string;
 }
 
 export type TAction<Payload> = {
