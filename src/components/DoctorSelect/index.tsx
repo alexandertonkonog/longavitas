@@ -77,7 +77,7 @@ const DoctorSelect: FC<TStepComponent> = ({resetHandle, state}) => {
   const setInitialValues = () => {
     const initialData = getDataFromInitialNode();
     form.batch(() => {
-      const clinic = siteAddress === SiteAdresses.SITE_DEV ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND;
+      const clinic = siteAddress === SiteAdresses.SITE_MAIN ? ClinicIds.SITE_MAIN : ClinicIds.SITE_SECOND;
       form.change('clinic', clinic);
       const changeClinic = (spec: string) => {
         const schedule = state.schedule?.find(item =>
