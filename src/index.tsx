@@ -8,5 +8,5 @@ ReactDOM.render(
   <HashRouter hashType={'noslash'}>
     <App />
   </HashRouter>,
-  document.getElementById('root')
+  document.getElementById('UMC-widget')
 );
