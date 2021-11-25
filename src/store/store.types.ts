@@ -28,7 +28,6 @@ export type TDoctorItem = {
   id: string;
   name: string;
   clinic: string;
-  duration: number;
   specialization: string;
 }
 
@@ -42,6 +41,7 @@ export type TScheduleItem = {
   specialization: string;
   clinic: string;
   time: TTimeItem[];
+  duration: number;
 }
 
 export type TDoctorPayloadItem = {

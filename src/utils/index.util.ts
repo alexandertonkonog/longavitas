@@ -1,6 +1,6 @@
 import { TSelectItem, TCalendarItem, TCalendarTimeItem } from "../components/fields/input.types";
 import { TAppState, TClinicItem, TDoctorItem, TFormValues, TScheduleItem } from "../store/store.types";
-import { DaysOfWeek, Months, SiteAdresses } from "../components/Widget/index.constant";
+import {DaysOfWeek, Months, SiteAdresses, SourceCodes} from "../components/Widget/index.constant";
 
 export const mapStateToSelectList = <Type extends TClinicItem | TDoctorItem>(list: Type[] | null | undefined): TSelectItem[] | [] => {
   if (!list) return [];
@@ -76,7 +76,7 @@ export const getDateList = (
 
     schedule!.forEach(item => {
       const doctorItem = state.doctors!.find(doc => doc.id === item.doctor);
-      const duration = doctorItem!.duration;
+      const duration = item.duration;
       item.time.forEach(time => {
         const startTime = new Date(time.timeStart);
         if (isEqualDate(startTime, localDate)) {
@@ -109,10 +109,6 @@ export const getDateList = (
   return result
     // .filter(item => item.time.length);
 }
-
-// const getTimeItems = (): TCalendarTimeItem => {
-//
-// }
 
 export const isEqualDate = (first: Date | null, second: Date | null = now): boolean => {
   if (!first || !second) return false;
@@ -179,7 +175,7 @@ type TAppointmentValues = {[key: string]: string | number | boolean};
 
 export const formatFormValues = (values: TFormValues, address: string): TAppointmentValues => {
   const result: TAppointmentValues = {
-    sourceCode: address === SiteAdresses.SITE_MAIN ? 38 : 141,
+    sourceCode: SourceCodes[address],
   };
   const entries = Object.entries(values);
   entries.forEach(([key, value]) => {

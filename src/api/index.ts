@@ -28,7 +28,8 @@ class API {
         //   Authorization: "Basic " + btoa(APIConstants.API_LOGIN + ':' + APIConstants.API_PASSWORD),
         // }
       })
-      return await response.json();
+      const result = await response.json();
+      return result;
     } catch (e) {
       console.error(e);
     }

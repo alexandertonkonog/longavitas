@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Route, Switch } from "react-router-dom";
+import React, {FC} from 'react';
+import {Route, Switch} from "react-router-dom";
 import Widget from "./components/Widget";
 
 const Paths: {[key: string]: string} = {

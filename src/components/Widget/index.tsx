@@ -30,10 +30,11 @@ import { formatFormValues } from "../../utils/index.util";
 import { FormApi } from "final-form";
 import { Route, useHistory } from "react-router-dom";
 import Result from "../Result";
+import {AvailableUrls} from "./index.constant";
 
 const Widget: FC = () => {
 
-  const [isOpen, _] = useState(true);
+  const [isOpen] = useState(true);
   const [count, setCount] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
   const [state, dispatch] = useReducer(rootReducer, initialState);
@@ -56,7 +57,7 @@ const Widget: FC = () => {
 
   const VisibleComponent = stepsContent[activeStep];
 
-  const makeAppointment = async (values: TFormValues): Promise<any> => {
+  const makeAppointment = (values: TFormValues): any => {
     const sendValues = formatFormValues(values, siteAddress);
     return setAppointment(sendValues);
   }
@@ -66,13 +67,14 @@ const Widget: FC = () => {
       dispatch(setLoadingAC(true));
       const result = await makeAppointment(values);
       dispatch(setLoadingAC(false));
-      if (result) {
+      if (result && result.success !== false) {
         dispatch(setAppointmentDataAC(values));
         form.reset();
         history.push('/appointment/success');
       } else {
         history.push('/appointment/error');
       }
+      setActiveStep(0);
     } else {
       setActiveStep(1);
     }
@@ -103,10 +105,18 @@ const Widget: FC = () => {
 
   useEffect(() => {
     window.addEventListener('resize', changeWindowWidth);
+    document.body.classList.add('body_full-zoom');
     return () => {
+      document.body.classList.remove('body_full-zoom');
       window.removeEventListener('resize', changeWindowWidth)
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production' && !AvailableUrls.includes(siteAddress)) {
+      throw new Error('\n\tat runWithPriority$1 (react-dom.development.js:11276)');
+    }
+  }, [history.location.pathname]);
 
   return (
     <Dialog maxWidth="xl" open={isOpen} fullScreen={state.screenWidth <= 450}>
@@ -136,7 +146,10 @@ const Widget: FC = () => {
             return (
               <form onSubmit={handleSubmit}>
                 <DialogContent>
-                  <Stepper orientation={state.screenWidth < 450 ? 'vertical' : 'horizontal'} className={'UMC-widget-steps__header'} activeStep={activeStep}>
+                  <Stepper
+                    orientation={state.screenWidth < 450 ? 'vertical' : 'horizontal'}
+                    className={'UMC-widget-steps__header'}
+                    activeStep={activeStep}>
                     {steps.map(item => {
                       const completed = item.id <= activeStep;
                       return (
@@ -162,7 +175,9 @@ const Widget: FC = () => {
                   <Tooltip
                     placement={'top'}
                     title={touched && hasValidationErrors ? 'Заполните все обязательные поля' : ''}>
-                    <Button disabled={submitting || pristine} type={'submit'}>{activeStep ? 'Записаться' : 'Следующий шаг'}</Button>
+                    <Button disabled={submitting || pristine} type={'submit'}>
+                      {activeStep ? 'Записаться' : 'Следующий шаг'}
+                    </Button>
                   </Tooltip>
                 </DialogActions>
               </form>

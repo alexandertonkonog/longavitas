@@ -4,6 +4,11 @@ body {
   font-weight: 400;
   font-size: 16px;
 }
+
+.body_full-zoom {
+  zoom: 100%!important;
+}
+
 .UMC-widget-wrapper {
   width: 500px;
   padding-bottom: 10px;
@@ -162,6 +167,11 @@ body {
   .UMC-widget-calendar__column-content {
     max-height: 500px;
     overflow: auto;
+  }
+}
+@media screen and (max-width: 1600px) {
+  .body_full-zoom {
+    zoom: 100%!important;
   }
 }
 @media screen and (max-width: 768px) {
