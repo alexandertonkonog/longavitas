@@ -58,13 +58,6 @@ const Calendar: FC<ICalendar> = (
     }
   }
 
-  // infinite reload
-  // useEffect(() => {
-  //   if (dateList?.every(item => !item.time.length)) {
-  //     changeCalendarMonth(true);
-  //   }
-  // }, [date])
-
   return (
     <Field name={name} validate={validate}>
       {({input, meta}) => {

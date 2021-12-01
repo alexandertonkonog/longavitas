@@ -102,6 +102,7 @@ export const getDateList = (
         }
       })
     })
+    dateItem.time = dateItem.time.sort((a, b) => a.date <= b.date ? -1 : 1);
     localDate.setDate(localDate.getDate() + 1);
     result.push(dateItem);
     count++;
