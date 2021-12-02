@@ -79,8 +79,8 @@
         }
 
         private function schedule() {
-            $startDate = !empty($this->request['startDate']) ? $this->request['startDate'] : (new DateTime())->format('Y-m-d\TH:i:s');
-            $finishDate = (new DateTime($startDate))->modify('+1 month')->format('Y-m-d\TH:i:s');
+            $startDate = !empty($this->request['startDate']) ? $this->request['startDate'] : (new DateTime())->format('Y-m-d') . 'T00:00:00';
+            $finishDate = (new DateTime($startDate))->modify('+1 month')->format('Y-m-d') . 'T00:00:00';
             $params = ['StartDate' => $startDate, 'FinishDate' => $finishDate];
             $xmlSchedule = $this->soap->__soapCall('GetSchedule', [$params], $this->options);
             $schedule = $this->getDataFromXml($xmlSchedule);

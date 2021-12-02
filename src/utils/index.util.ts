@@ -107,7 +107,7 @@ export const getDateList = (
     result.push(dateItem);
     count++;
   }
-  return result
+  return result;
     // .filter(item => item.time.length);
 }
 

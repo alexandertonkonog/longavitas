@@ -163,6 +163,10 @@ body {
   justify-content: flex-start!important;
 }
 
+.UMC-widget-calendar__column-content {
+  padding: 0 5px;
+}
+
 @media screen and (max-width: 1024px) {
   .UMC-widget-calendar__column-content {
     max-height: 500px;

@@ -2,7 +2,7 @@ import { APIConstants } from "./index.constant";
 import { TApiParams, TUrlParams } from "./index.types";
 
 class API {
-  public async get(urlParams: TUrlParams): Promise<any> {
+  public async get(urlParams?: TUrlParams): Promise<any> {
     const params: TApiParams = {
       method: 'GET',
       params: urlParams
