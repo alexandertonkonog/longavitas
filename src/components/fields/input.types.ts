@@ -9,7 +9,7 @@ export interface IInput {
   visibleName?: string;
   mask?: any;
   deps?: (keyof TFormValues)[];
-  id?: string | number;
+  id?: number;
   order?: number;
   type: 'select' | 'input' | 'date' | 'checkbox';
 }

@@ -111,7 +111,6 @@
             try {
                 $xml = $this->soap->__soapCall('GetReserve', [$params], $this->options);
             } catch(SoapFault $fault) {
-                $item = $this->soap->__getLastRequest();
                 header('HTTP/1.1 500');
                 header('Content-Type: application/json; charset=UTF-8');
                 die(json_encode(['message' => $fault->getMessage(), 'success' => false]));
@@ -134,7 +133,7 @@
                 'TimeBegin' => $this->request->date,
                 'PatientSurname' => $this->request->surname,
                 'PatientName' => $this->request->name,
-                'PatientFatherName' => $notFilled,
+                'PatientFatherName' => $this->request->fatherName ? $this->request->fatherName : $notFilled,
                 'Comment' => $this->request->comment ? $this->request->comment : $notFilled,
                 'Phone' => $this->request->number,
                 'Email' => $notFilled,

@@ -14,22 +14,31 @@ const Personal: FC<TStepComponent> = () => {
       title: 'Введите имя',
       type: 'input',
       visibility: true,
-      id: 1},
+      id: 2},
     {name: 'surname',
       validate: isLength(2, 20),
       title: 'Введите фамилию',
       type: 'input',
       visibility: true,
-      id: 2},
+      id: 1},
+    {name: 'fatherName',
+      visibleName: 'Адрес',
+      title: 'Введите отчество',
+      type: 'input',
+      visibility: true,
+      id: 3},
     {name: 'number',
       validate: isLength(11, 11),
       title: 'Введите телефон',
       mask: '+7 (000) 00-00-000',
       visibility: true,
       type: 'input',
-      id: 3},
+      id: 4},
     {name: 'birthday',
-      validate: isLength(8, 8),
+      validate: isLength(8, 8, {
+        min: 'Введите дату в формате ДД.ММ.ГГГГ',
+        max: 'Введите дату в формате ДД.ММ.ГГГГ',
+      }),
       title: 'Введите дату рождения',
       type: 'input',
       mask: Date,
@@ -53,7 +62,7 @@ const Personal: FC<TStepComponent> = () => {
       visibility: true,
       title: 'Я согласен с Политикой конфиденциальности',
       type: 'checkbox',
-      id: 4},
+      id: 8},
   ];
 
   const [inputList, setInputList] = useState(inputListArr);
@@ -69,9 +78,11 @@ const Personal: FC<TStepComponent> = () => {
     })
   }
 
+  const sortedList = inputList.slice().sort((a, b) => a.id && b.id ? a.id - b.id : 0);
+
   return (
     <Stack spacing={2}>
-      {inputList.map(item => {
+      {sortedList.map(item => {
         if (item.type === 'checkbox') {
           return <CheckboxInput key={item.id} {...item} />;
         }
