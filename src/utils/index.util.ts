@@ -66,6 +66,7 @@ export const getDateList = (
     : state.schedule?.filter(item => item.specialization === specialization);
 
   let count = 0;
+  const today = new Date();
   const localDate = new Date(date);
   const result: TCalendarItem[] = [];
   while(count < 5) {
@@ -77,9 +78,14 @@ export const getDateList = (
     schedule!.forEach(item => {
       const doctorItem = state.doctors!.find(doc => doc.id === item.doctor);
       const duration = item.duration;
+
       item.time.forEach(time => {
         const startTime = new Date(time.timeStart);
-        if (isEqualDate(startTime, localDate)) {
+        const condition = isEqualDate(startTime, localDate);
+        if (today > startTime) {
+          return null;
+        }
+        if (condition) {
           const endTime = new Date(time.timeEnd);
           while (startTime < endTime) {
             const thisDate = new Date(startTime);
@@ -99,6 +105,8 @@ export const getDateList = (
               }
             }
           }
+        } else {
+
         }
       })
     })

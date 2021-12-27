@@ -125,6 +125,7 @@
             }
 
             $notFilled = 'Не заполнено';
+            $notFilledFatherName = 'Отчество';
 
             $appointmentParams = [
                 'EmployeeID' => $this->request->doctor, 
@@ -133,7 +134,7 @@
                 'TimeBegin' => $this->request->date,
                 'PatientSurname' => $this->request->surname,
                 'PatientName' => $this->request->name,
-                'PatientFatherName' => $this->request->fatherName ? $this->request->fatherName : $notFilled,
+                'PatientFatherName' => $this->request->fatherName ? $this->request->fatherName : $notFilledFatherName,
                 'Comment' => $this->request->comment ? $this->request->comment : $notFilled,
                 'Phone' => $this->request->number,
                 'Email' => $notFilled,
@@ -159,7 +160,6 @@
             try {
                 $appointmentXml = $this->soap->__soapCall("BookAnAppointmentWithParams", [$appointmentParams], $this->options);
                 $appointmentResponse = $this->getDataFromXml($appointmentXml);
-                $item = $this->soap->__getLastRequest();
                 $clientResponse = new stdClass();
                 if ($appointmentResponse->Результат === 'true') {
                     $clientResponse->success = true;
