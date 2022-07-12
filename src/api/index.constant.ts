@@ -1,4 +1,4 @@
-const localUrl = false;
+const localUrl = true;
 
 export const APIConstants = {
   API_URL: process.env.NODE_ENV === 'production'

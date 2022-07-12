@@ -67,6 +67,7 @@ export const getDateList = (
 
   let count = 0;
   const today = new Date();
+
   const localDate = new Date(date);
   const result: TCalendarItem[] = [];
   while(count < 5) {
@@ -81,9 +82,12 @@ export const getDateList = (
 
       item.time.forEach(time => {
         const startTime = new Date(time.timeStart);
+        const lastAvailableDate = new Date(time.timeEnd);
+        lastAvailableDate.setMinutes(lastAvailableDate.getMinutes() - duration);
         const condition = isEqualDate(startTime, localDate);
-        if (today > startTime) {
-          return null;
+
+        if (today > lastAvailableDate) {
+          return;
         }
         if (condition) {
           const endTime = new Date(time.timeEnd);
@@ -91,7 +95,7 @@ export const getDateList = (
             const thisDate = new Date(startTime);
             const thisDateStr = getVisibleTime(thisDate);
             startTime.setMinutes(startTime.getMinutes() + duration);
-            if (startTime <= endTime) {
+            if (startTime <= endTime && thisDate > today) {
               const indexElem = dateItem.time.findIndex(elem => elem.time === thisDateStr);
               if (indexElem >= 0) {
                 dateItem.time[indexElem].doctors.push(doctorItem!.id);
@@ -116,7 +120,6 @@ export const getDateList = (
     count++;
   }
   return result;
-    // .filter(item => item.time.length);
 }
 
 export const isEqualDate = (first: Date | null, second: Date | null = now): boolean => {
@@ -173,7 +176,7 @@ export const getDateForCalendarTitle = (date: Date | null): string => {
 
 export const getMonthGenitive = (month: number): string => {
   const monthName = Months[month];
-  if (month === 2) {
+  if (month === 2 || month === 7) {
     return monthName + 'а';
   }
   const lastChar = monthName[monthName.length - 1];
